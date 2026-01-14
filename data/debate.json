@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "topic": "AIGC是否会替代程序员",
+    "pro": "支持方观点",
+    "con": "反对方观点"
+  },
+  {
+    "id": 2,
+    "topic": "Python vs Java 后端选型",
+    "pro": "Python优势",
+    "con": "Java优势"
+  }
+]

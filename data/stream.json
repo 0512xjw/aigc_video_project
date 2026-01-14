@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "title": "AIGC视频制作教程",
+    "url": "https://example.com/stream1",
+    "status": "live"
+  },
+  {
+    "id": 2,
+    "title": "技术辩论直播",
+    "url": "https://example.com/stream2",
+    "status": "pending"
+  }
+]
