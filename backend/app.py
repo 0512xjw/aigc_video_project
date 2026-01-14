@@ -1,34 +1,67 @@
-# backend/app.py
 from flask import Flask, jsonify
 from flask_cors import CORS
-import json
 import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # 允许跨域
+app.config['JSON_AS_ASCII'] = False  # 解决中文乱码
 
-# 适配Vercel环境的路径配置
-if os.environ.get("VERCEL"):
-    # Vercel环境下，根目录为项目根目录
-    DATA_DIR = os.path.join(os.path.dirname(__file__), "../data")
-else:
-    # 本地环境路径
-    DATA_DIR = os.path.join(os.path.dirname(__file__), "../data")
-
-# 确保数据目录存在（Vercel只读，需提前上传数据文件）
-os.makedirs(DATA_DIR, exist_ok=True)
-
-# 接口逻辑保持不变（后续接口代码省略，沿用之前的即可）
-@app.route("/api/users", methods=["GET"])
+# 接口：获取用户列表
+@app.route('/api/users', methods=['GET'])
 def get_users():
-    try:
-        with open(os.path.join(DATA_DIR, "users.json"), "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return jsonify({"code": 200, "data": data, "msg": "success"})
-    except Exception as e:
-        return jsonify({"code": 500, "msg": f"获取用户数据失败：{str(e)}"}), 500
+    return jsonify({
+        "code": 200,
+        "msg": "success",
+        "data": [
+            {"avatar": "https://via.placeholder.com/40", "id": 1, "name": "观众1", "role": "viewer"},
+            {"avatar": "https://via.placeholder.com/40", "id": 2, "name": "主播", "role": "host"},
+            {"avatar": "https://via.placeholder.com/40", "id": 3, "name": "辩论嘉宾", "role": "guest"}
+        ]
+    })
 
-# 其他接口（stream/schedules/debate）保持不变
+# 接口：获取直播流信息
+@app.route('/api/stream', methods=['GET'])
+def get_stream():
+    return jsonify({
+        "code": 200,
+        "msg": "直播流数据获取成功",
+        "data": {
+            "streamUrl": "https://example.com/live/ai-debate.m3u8",
+            "status": "online",
+            "viewerCount": 1200,
+            "liveTitle": "AI发展利大于弊辩论赛"
+        }
+    })
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+# 接口：获取辩论数据
+@app.route('/api/debate', methods=['GET'])
+def get_debate():
+    return jsonify({
+        "code": 200,
+        "msg": "辩论数据获取成功",
+        "data": {
+            "topic": "人工智能的发展对人类社会利大于弊吗？",
+            "positiveTeam": "科技派",
+            "negativeTeam": "保守派",
+            "progress": "自由辩论阶段",
+            "remainingTime": "5分钟"
+        }
+    })
+
+# 接口：获取日程安排
+@app.route('/api/schedules', methods=['GET'])
+def get_schedules():
+    return jsonify({
+        "code": 200,
+        "msg": "日程数据获取成功",
+        "data": [
+            {"id": 1, "title": "辩论赛彩排", "time": "2026-01-16 14:00"},
+            {"id": 2, "title": "正式直播", "time": "2026-01-16 19:00"},
+            {"id": 3, "title": "赛后复盘", "time": "2026-01-17 10:00"}
+        ]
+    })
+
+# 启动服务（适配Vercel）
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=not os.environ.get('VERCEL'))
